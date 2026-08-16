@@ -1,38 +1,87 @@
 package com.actor.app
-import android.app.*
+
+import android.app.Activity
 import android.os.Bundle
-import android.webkit.*
-import android.content.Intent
+import android.webkit.CookieManager
+import android.webkit.WebChromeClient
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import android.webkit.WebResourceRequest
 import android.net.Uri
-import android.provider.MediaStore
+import android.content.Intent
 import android.webkit.ValueCallback
 
-class MainActivity: Activity() {
+class MainActivity : Activity() {
     private lateinit var web: WebView
     private var chooser: ValueCallback<Array<Uri>>? = null
-    private val PICK = 1001
-    override fun onCreate(b: Bundle?) {
-        super.onCreate(b); setContentView(com.actor.app.R.layout.activity_main)
-        web=findViewById(com.actor.app.R.id.web)
-        web.settings.javaScriptEnabled=true
-        web.settings.domStorageEnabled=true
-        web.settings.databaseEnabled=true
-        web.settings.cacheMode=WebSettings.LOAD_DEFAULT
+    private val PICK_FILE = 1001
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        web = findViewById(R.id.web)
+
+        web.settings.javaScriptEnabled = true
+        web.settings.domStorageEnabled = true
+        web.settings.databaseEnabled = true
+        web.settings.allowFileAccess = true
+        web.settings.allowContentAccess = true
+        web.settings.javaScriptCanOpenWindowsAutomatically = true
+        web.settings.mediaPlaybackRequiresUserGesture = true
+        web.settings.userAgentString = web.settings.userAgentString + " ACTOR-Android/1.2"
+
         CookieManager.getInstance().setAcceptCookie(true)
-        CookieManager.getInstance().setAcceptThirdPartyCookies(web,true)
-        web.settings.allowFileAccess=true
-        web.webViewClient=object:WebViewClient(){
-            override fun shouldOverrideUrlLoading(view:WebView?, request:WebResourceRequest?)=false
-            override fun onPageFinished(view:WebView?, url:String?){ super.onPageFinished(view,url); CookieManager.getInstance().flush() }
-        }
-        web.webChromeClient=object:WebChromeClient(){
-            override fun onShowFileChooser(v:WebView?, cb:ValueCallback<Array<Uri>>?, p:FileChooserParams?):Boolean{
-                chooser?.onReceiveValue(null); chooser=cb
-                return try { startActivityForResult(p?.createIntent() ?: Intent(Intent.ACTION_GET_CONTENT).apply{type="*/*"},PICK); true } catch(e:Exception){ chooser=null; false }
+        CookieManager.getInstance().setAcceptThirdPartyCookies(web, true)
+
+        web.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                return false
             }
         }
+
+        web.webChromeClient = object : WebChromeClient() {
+            override fun onShowFileChooser(
+                webView: WebView?,
+                filePathCallback: ValueCallback<Array<Uri>>?,
+                fileChooserParams: FileChooserParams?
+            ): Boolean {
+                chooser?.onReceiveValue(null)
+                chooser = filePathCallback
+                return try {
+                    val intent = fileChooserParams?.createIntent()
+                        ?: Intent(Intent.ACTION_GET_CONTENT).apply {
+                            type = "*/*"
+                            addCategory(Intent.CATEGORY_OPENABLE)
+                        }
+                    startActivityForResult(intent, PICK_FILE)
+                    true
+                } catch (e: Exception) {
+                    chooser?.onReceiveValue(null)
+                    chooser = null
+                    false
+                }
+            }
+        }
+
         web.loadUrl("https://actor-backend-f1my.onrender.com")
     }
-    override fun onActivityResult(r:Int,c:Int,d:Intent?){ super.onActivityResult(r,c,d); if(r==PICK){ chooser?.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(c,d)); chooser=null } }
-    override fun onBackPressed(){ if(web.canGoBack()) web.goBack() else super.onBackPressed() }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_FILE) {
+            chooser?.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data))
+            chooser = null
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        if (::web.isInitialized && web.canGoBack()) {
+            web.goBack()
+        } else {
+            super.onBackPressed()
+        }
+    }
 }

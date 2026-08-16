@@ -1,4 +1,10 @@
-ACTOR Android APK project
-Backend: https://actor-backend-f1my.onrender.com
-Open this folder in Android Studio, allow Gradle sync, then Build > Build Bundle(s) / APK(s) > Build APK(s).
-The app uses WebView and supports HTML file chooser for photo/video upload.
+ACTOR Android V3 — Crash Fix
+================================
+Changes:
+- Rebuilt MainActivity from clean baseline.
+- Removed risky networkSecurityConfig change from V2.
+- Kept JavaScript, DOM storage, cookies and file chooser support.
+- Uses HTTPS Render URL directly.
+- Version 1.2 / versionCode 3.
+
+Upload these files to the actor-android GitHub repository and let GitHub Actions build a new APK.

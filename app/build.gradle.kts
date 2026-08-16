@@ -6,7 +6,7 @@ android {
         applicationId = "com.actor.app"
         minSdk = 24
         targetSdk = 35
-        versionCode = 3
-        versionName = "1.2-crash-fix"
+        versionCode = 10
+        versionName = "0.1-diagnostic"
     }
 }

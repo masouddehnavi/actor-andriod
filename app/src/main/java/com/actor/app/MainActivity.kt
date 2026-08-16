@@ -1,19 +1,29 @@
 package com.actor.app
 
-import android.app.Activity
 import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity() {
+    private lateinit var web: WebView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val web = findViewById<WebView>(R.id.web)
+        web = findViewById(R.id.web)
         web.settings.javaScriptEnabled = true
         web.settings.domStorageEnabled = true
         web.webViewClient = WebViewClient()
         web.loadUrl("https://actor-backend-f1my.onrender.com")
+    }
+
+    override fun onDestroy() {
+        if (::web.isInitialized) {
+            web.stopLoading()
+            web.destroy()
+        }
+        super.onDestroy()
     }
 }

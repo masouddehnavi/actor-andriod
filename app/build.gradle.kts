@@ -5,12 +5,19 @@ plugins {
 android {
     namespace = "com.actor.app"
     compileSdk = 35
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+    }
     defaultConfig {
         applicationId = "com.actor.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 20
-        versionName = "2.0-androidx"
+        versionCode = 21
+        versionName = "2.1-build-fix"
     }
 }
 dependencies {

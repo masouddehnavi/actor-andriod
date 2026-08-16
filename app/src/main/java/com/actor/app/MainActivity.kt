@@ -16,8 +16,15 @@ class MainActivity: Activity() {
         web=findViewById(com.actor.app.R.id.web)
         web.settings.javaScriptEnabled=true
         web.settings.domStorageEnabled=true
+        web.settings.databaseEnabled=true
+        web.settings.cacheMode=WebSettings.LOAD_DEFAULT
+        CookieManager.getInstance().setAcceptCookie(true)
+        CookieManager.getInstance().setAcceptThirdPartyCookies(web,true)
         web.settings.allowFileAccess=true
-        web.webViewClient=WebViewClient()
+        web.webViewClient=object:WebViewClient(){
+            override fun shouldOverrideUrlLoading(view:WebView?, request:WebResourceRequest?)=false
+            override fun onPageFinished(view:WebView?, url:String?){ super.onPageFinished(view,url); CookieManager.getInstance().flush() }
+        }
         web.webChromeClient=object:WebChromeClient(){
             override fun onShowFileChooser(v:WebView?, cb:ValueCallback<Array<Uri>>?, p:FileChooserParams?):Boolean{
                 chooser?.onReceiveValue(null); chooser=cb

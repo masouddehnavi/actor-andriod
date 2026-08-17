@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         web.settings.javaScriptEnabled = true
         web.settings.domStorageEnabled = true
         web.webViewClient = WebViewClient()
-        web.loadUrl("https://actor-backend-f1my.onrender.com")
+        web.loadUrl("https://actor-backend-f1my.onrender.com/login")
     }
 
     override fun onDestroy() {

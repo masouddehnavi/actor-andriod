@@ -16,8 +16,8 @@ android {
         applicationId = "com.actor.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 21
-        versionName = "2.1-build-fix"
+        versionCode = 22
+        versionName = "2.2-login-route"
     }
 }
 dependencies {
